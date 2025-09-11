@@ -1,0 +1,29 @@
+[req]
+days                   = 1825
+serial                 = 1
+distinguished_name     = req_distinguished_name
+req_extensions         = v3_req
+x509_extensions        = v3_ca
+prompt                 = no
+
+[req_distinguished_name]
+countryName            = BE
+stateOrProvinceName    = LI
+localityName           = TLO
+organizationName       = Melexis
+organizationalUnitName = Act
+commonName             = Melexis Compact Master LIN
+emailAddress           = noreply@melexis-compact-master.com
+
+[v3_req]
+basicConstraints       = CA:TRUE
+keyUsage               = critical, digitalSignature, keyAgreement
+
+[v3_ca]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = CA:TRUE
+keyUsage               = critical, digitalSignature, keyAgreement
+extendedKeyUsage       = serverAuth
+subjectAltName         = DNS:mcm-XXXXX, IP:192.168.9.2
+issuerAltName          = issuer:copy
