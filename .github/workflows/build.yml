@@ -1,0 +1,77 @@
+name: Build Project
+
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Static analysis job
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+    - name: npm install and lint
+      run: |
+        cd frontend
+        npm install
+        npm run lint
+
+  # Build webUI job
+  webUI:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+      with:
+        lfs: true
+        fetch-depth: 20
+        fetch-tags: true
+    - name: npm install and build
+      run: |
+        cd frontend
+        npm install
+        npm run build
+    - name: Archive webUI artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist-webui
+        path: |
+          frontend/dist/
+        retention-days: 5
+
+  # Build firmware job
+  firmware:
+    runs-on: ubuntu-latest
+    container: espressif/idf:release-v5.4
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Download webUI artifacts
+      uses: actions/download-artifact@v5
+      with:
+        name: dist-webui
+        path: frontend/dist/
+    - name: Build firmware
+      shell: bash
+      run: |
+        cd firmware
+        source $IDF_PATH/export.sh
+        pip install -r www_bin/generate/py-requirements.txt
+        python www_bin/generate/generate.py ../frontend/dist/
+        idf.py set-target esp32s3
+        idf.py build
+    - name: Archive firmware binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: binaries
+        path: |
+          firmware/build
+        retention-days: 5

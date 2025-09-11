@@ -1,0 +1,19 @@
+orsource "$IDF_PATH/examples/common_components/env_caps/$IDF_TARGET/Kconfig.env_caps"
+
+menu "MCM - Bus Configuration"
+
+    config BUS_VOLTAGE_5V_CTRL
+        int "5V Vbus control pin number"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_IN_RANGE_MAX
+        default 9
+        help
+            GPIO number for the 5V Vbus control pin.
+
+    config BUS_VOLTAGE_VOUT_CTRL
+        int "Vout Vbus control pin number"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_IN_RANGE_MAX
+        default 10
+        help
+            GPIO number for the Vout Vbus control pin.
+
+endmenu
