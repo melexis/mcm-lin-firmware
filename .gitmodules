@@ -1,12 +1,15 @@
-[submodule "firmware/components/mlx_crc"]
-	path = firmware/components/mlx_crc
-	url = https://github.com/melexis/mcm-lib-mlx-crc
-[submodule "firmware/components/mlx_chip"]
-	path = firmware/components/mlx_chip
-	url = https://github.com/melexis/mcm-lib-mlx-chip
 [submodule "firmware/components/intelhex"]
 	path = firmware/components/intelhex
-	url = https://github.com/melexis/mcm-lib-intelhex
+	url = ../../melexis/mcm-lib-intelhex
+[submodule "firmware/components/lin_master"]
+	path = firmware/components/lin_master
+	url = ../../melexis/mcm-lib-lin-master.git
+[submodule "firmware/components/mlx_chip"]
+	path = firmware/components/mlx_chip
+	url = ../../melexis/mcm-lib-mlx-chip
+[submodule "firmware/components/mlx_crc"]
+	path = firmware/components/mlx_crc
+	url = ../../melexis/mcm-lib-mlx-crc
 [submodule "firmware/components/ppm_bootloader"]
 	path = firmware/components/ppm_bootloader
-	url = https://github.com/melexis/mcm-lib-ppm-bootloader
+	url = ../../melexis/mcm-lib-ppm-bootloader

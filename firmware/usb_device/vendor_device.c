@@ -285,11 +285,11 @@ static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uin
     switch (command) {
         case MCM_LIN_COMM_SEND_WAKEUP:
     ESP_LOGI(TAG, "send wakeup %d", *((uint16_t*)data));
-            lin_error_code_t error = linmaster_sendWakeUp(*((uint16_t*)data));
-            if (error == ERROR_LIN_NONE) {
+            lin_err_t error = linmaster_send_wakeup(*((uint16_t*)data));
+            if (error == LIN_OK) {
                 retval = true;
             } else {
-                bulk_lin_report_error(command, mlxerr_ErrorCodeToName(MLX_FAIL_SERVER_ERR));
+                bulk_lin_report_error(command, lin_err_to_string(error));
             }
             break;
 
@@ -298,35 +298,35 @@ static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uin
             bulk_lin_transfer_message_t * message = (bulk_lin_transfer_message_t*)data;
             if (message->m2s != 0u) {
                 /* M2S message */
-                lin_error_code_t error = linmaster_sendM2S(message->baudrate,
-                                                           message->enhanced_crc != 0u,
-                                                           message->frameid,
-                                                           message->payload,
-                                                           message->datalength);
+                lin_err_t error = linmaster_send_m2s(message->baudrate,
+                                                     message->enhanced_crc != 0u,
+                                                     message->frameid,
+                                                     message->payload,
+                                                     message->datalength);
 
     ESP_LOGI(TAG, "m2s error %d %d", (int)message->frameid, (int)error);
-                if (error == ERROR_LIN_NONE) {
+                if (error == LIN_OK) {
                     retval = true;
                 } else {
-                    /* report error */
+                    bulk_lin_report_error(command, lin_err_to_string(error));
                 }
             } else {
                 /* S2M message */
                 uint8_t *resp = calloc(message->datalength, sizeof(uint8_t));
                 if (resp != NULL) {
-                    lin_error_code_t error = linmaster_sendS2M(message->baudrate,
-                                                               message->enhanced_crc != 0u,
-                                                               message->frameid,
-                                                               resp,
-                                                               message->datalength);
+                    lin_err_t error = linmaster_send_s2m(message->baudrate,
+                                                         message->enhanced_crc != 0u,
+                                                         message->frameid,
+                                                         resp,
+                                                         message->datalength);
 
         ESP_LOGI(TAG, "s2m error %d %d", (int)message->frameid, (int)error);
-                    if (error == ERROR_LIN_NONE) {
+                    if (error == LIN_OK) {
                         /* Report the received message */
                         bulk_lin_response(command, resp, message->datalength);
                         retval = true;
                     } else {
-                        /* report error */
+                        bulk_lin_report_error(command, lin_err_to_string(error));
                     }
                     free(resp);
                 }
