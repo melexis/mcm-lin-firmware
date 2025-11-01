@@ -115,12 +115,12 @@ static wss_error_code_t wss_lin_ifc_wake_up(const cJSON * const params, cJSON * 
             pulse_time = (int)cJSON_GetNumberValue(pulse_time_json);
         }
 
-        lin_error_code_t error = linmaster_sendWakeUp(pulse_time);
+        lin_err_t error = linmaster_send_wakeup(pulse_time);
 
-        if (error == ERROR_LIN_NONE) {
+        if (error == LIN_OK) {
             retval = WSS_ERR_NONE;
         } else {
-            cJSON_AddStringToObject(result, "message", mlxerr_ErrorCodeToName(MLX_FAIL_SERVER_ERR));
+            cJSON_AddStringToObject(result, "message", lin_err_to_string(error));
             retval = WSS_ERR_ALREADY_SET;
         }
     } else {
@@ -159,16 +159,16 @@ static wss_error_code_t wss_lin_handle_message_on_bus(const cJSON * const params
                             payload[i] = cJSON_GetArrayItem(payload_json, i)->valueint;
                         }
 
-                        lin_error_code_t error = linmaster_sendM2S(baudrate,
-                                                                   enhanced_crc,
-                                                                   frameid,
-                                                                   payload,
-                                                                   datalength);
+                        lin_err_t error = linmaster_send_m2s(baudrate,
+                                                             enhanced_crc,
+                                                             frameid,
+                                                             payload,
+                                                             datalength);
 
-                        if (error == ERROR_LIN_NONE) {
+                        if (error == LIN_OK) {
                             retval = WSS_ERR_NONE;
                         } else {
-                            cJSON_AddStringToObject(result, "message", "LIN Failed");   /* TODO convert to user friendly errors */
+                            cJSON_AddStringToObject(result, "message", lin_err_to_string(error));
                             retval = WSS_ERR_ALREADY_SET;
                         }
                     } else {
@@ -183,9 +183,9 @@ static wss_error_code_t wss_lin_handle_message_on_bus(const cJSON * const params
             } else {
                 uint8_t *data = calloc(datalength, sizeof(uint8_t));
                 if (data != NULL) {
-                    lin_error_code_t error = linmaster_sendS2M(baudrate, enhanced_crc, frameid, data, datalength);
+                    lin_err_t error = linmaster_send_s2m(baudrate, enhanced_crc, frameid, data, datalength);
 
-                    if (error == ERROR_LIN_NONE) {
+                    if (error == LIN_OK) {
                         /* Copy data into json */
                         cJSON *result_json = cJSON_AddArrayToObject(result, "data");
                         for (int i = 0; i < datalength; i++) {
@@ -194,7 +194,7 @@ static wss_error_code_t wss_lin_handle_message_on_bus(const cJSON * const params
                         }
                         retval = WSS_ERR_NONE;
                     } else {
-                        cJSON_AddStringToObject(result, "message", "LIN Failed");   /* TODO convert to user friendly errors */
+                        cJSON_AddStringToObject(result, "message", lin_err_to_string(error));
                         retval = WSS_ERR_ALREADY_SET;
                     }
                 } else {

@@ -14,6 +14,7 @@ idf_component_register(
              esp_https_server
              esp_timer
              json
+             lin_master
              mlx_err
              networking
              power_ctrl

@@ -4,7 +4,6 @@ set(EXTRA_COMPONENT_DIRS
     bus_manager
     device_info
     device_status
-    lin_master
     mlx_err
     networking
     ota_support
