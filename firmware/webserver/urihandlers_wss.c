@@ -286,7 +286,7 @@ static wss_error_code_t wss_btl_handler(const char* function, const cJSON * cons
             if (ppmstat == PPM_OK) {
                 retval = WSS_ERR_NONE;
             } else {
-                cJSON_AddStringToObject(result, "message", ppmerr_ErrorCodeToName(ppmstat));
+                cJSON_AddStringToObject(result, "message", ppm_err_to_string(ppmstat));
                 retval = WSS_ERR_ALREADY_SET;
             }
         } else {
