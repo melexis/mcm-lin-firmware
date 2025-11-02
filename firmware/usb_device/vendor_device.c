@@ -72,7 +72,9 @@ typedef enum vendor_request_e {
     MCM_VENDOR_REQUEST_INFO = 0x01,
     MCM_VENDOR_REQUEST_CONFIG = 0x02,
     MCM_VENDOR_REQUEST_SLAVE_CTRL = 0x10,
-    MCM_VENDOR_REQUEST_LIN_COMM = 0x20,
+    MCM_VENDOR_REQUEST_BARE_UART_MODE = 0x20,
+    MCM_VENDOR_REQUEST_PWM_COMM = 0x21,
+    MCM_VENDOR_REQUEST_LIN_COMM = 0x22,
     MCM_VENDOR_REQUEST_BOOTLOADER_DO_TRANSFER = 0x30,
     MCM_VENDOR_REQUEST_BOOTLOADER_DO = 0x31,
     MCM_VENDOR_REQUEST_OTA_DO_TRANSFER = 0x80,
@@ -275,21 +277,28 @@ static bool bulk_lin_response(uint16_t command, const uint8_t * data, uint16_t d
     return retval;
 }
 
-static bool bulk_lin_report_error(uint16_t command, const char *buffer) {
-    return bulk_lin_response(command, (const uint8_t*)buffer, strlen(buffer));
+static bool bulk_lin_report_error(uint16_t command, lin_err_t error) {
+    const char *error_msg = lin_err_to_string(error);
+    uint16_t datalen = 2u + 2u + strlen(error_msg);
+    uint8_t *data = calloc(datalen, sizeof(uint8_t));
+    if (data != NULL) {
+        *(uint16_t*)(&data[0]) = command;
+        *(uint16_t*)(&data[2]) = error;
+        memcpy(&data[4], error_msg, strlen(error_msg));
+        return bulk_lin_response(MCM_LIN_ERROR_REPORT, (const uint8_t*)data, datalen);
+    }
+    return false;
 }
 
 static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uint16_t datalen) {
     bool retval = false;
-    ESP_LOGI(TAG, "LIN command %d", (int)command);
     switch (command) {
         case MCM_LIN_COMM_SEND_WAKEUP:
-    ESP_LOGI(TAG, "send wakeup %d", *((uint16_t*)data));
             lin_err_t error = linmaster_send_wakeup(*((uint16_t*)data));
             if (error == LIN_OK) {
                 retval = true;
             } else {
-                bulk_lin_report_error(command, lin_err_to_string(error));
+                bulk_lin_report_error(command, error);
             }
             break;
 
@@ -304,11 +313,10 @@ static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uin
                                                      message->payload,
                                                      message->datalength);
 
-    ESP_LOGI(TAG, "m2s error %d %d", (int)message->frameid, (int)error);
                 if (error == LIN_OK) {
                     retval = true;
                 } else {
-                    bulk_lin_report_error(command, lin_err_to_string(error));
+                    bulk_lin_report_error(command, error);
                 }
             } else {
                 /* S2M message */
@@ -320,13 +328,12 @@ static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uin
                                                          resp,
                                                          message->datalength);
 
-        ESP_LOGI(TAG, "s2m error %d %d", (int)message->frameid, (int)error);
                     if (error == LIN_OK) {
                         /* Report the received message */
                         bulk_lin_response(command, resp, message->datalength);
                         retval = true;
                     } else {
-                        bulk_lin_report_error(command, lin_err_to_string(error));
+                        bulk_lin_report_error(command, error);
                     }
                     free(resp);
                 }
@@ -358,8 +365,6 @@ static uint16_t tud_vendor_bulk_task_lin_mode(char *buffer, size_t buffer_wr_ptr
     } else {
         vTaskDelay(pdMS_TO_TICKS(50));
     }
-
-    ESP_LOGI(TAG, "ptr wr %d rd %d size %d", (int)buffer_wr_ptr, (int)buffer_rd_ptr, (int)sizeof(bulk_lin_header_t));
 
     /* TODO add timeout ? */
     if (buffer_wr_ptr >= (sizeof(bulk_lin_header_t) + 2)) {
