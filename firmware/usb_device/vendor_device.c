@@ -275,8 +275,17 @@ static bool bulk_lin_response(uint16_t command, const uint8_t * data, uint16_t d
     return retval;
 }
 
-static bool bulk_lin_report_error(uint16_t command, const char *buffer) {
-    return bulk_lin_response(command, (const uint8_t*)buffer, strlen(buffer));
+static bool bulk_lin_report_error(uint16_t command, lin_err_t error) {
+    const char *error_msg = lin_err_to_string(error);
+    uint16_t datalen = 2u + 2u + strlen(error_msg);
+    uint8_t *data = calloc(datalen, sizeof(uint8_t));
+    if (data != NULL) {
+        *(uint16_t*)(&data[0]) = command;
+        *(uint16_t*)(&data[2]) = error;
+        memcpy(&data[4], error_msg, strlen(error_msg));
+        return bulk_lin_response(MCM_LIN_ERROR_REPORT, (const uint8_t*)data, datalen);
+    }
+    return false;
 }
 
 static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uint16_t datalen) {
@@ -289,7 +298,7 @@ static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uin
             if (error == LIN_OK) {
                 retval = true;
             } else {
-                bulk_lin_report_error(command, lin_err_to_string(error));
+                bulk_lin_report_error(command, error);
             }
             break;
 
@@ -308,7 +317,7 @@ static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uin
                 if (error == LIN_OK) {
                     retval = true;
                 } else {
-                    bulk_lin_report_error(command, lin_err_to_string(error));
+                    bulk_lin_report_error(command, error);
                 }
             } else {
                 /* S2M message */
@@ -326,7 +335,7 @@ static bool bulk_lin_command_handler(uint16_t command, const uint8_t * data, uin
                         bulk_lin_response(command, resp, message->datalength);
                         retval = true;
                     } else {
-                        bulk_lin_report_error(command, lin_err_to_string(error));
+                        bulk_lin_report_error(command, error);
                     }
                     free(resp);
                 }
