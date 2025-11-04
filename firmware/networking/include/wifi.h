@@ -33,7 +33,7 @@ void wifi_tick(void);
 
 /** update the ssid for the wifi interface.
  *
- * @param[in]  ssid  new ssid to set/store.
+ * @param[in]  ssid  new ssid to set/store (max 32 chars).
  * @param[in]  immediate  immediate apply the new settings.
  * @returns  error code representing the progress of the operation.
  */
@@ -49,7 +49,7 @@ esp_err_t wifi_get_ssid(char * ssid, size_t ssid_len);
 
 /** update the password for the wifi interface.
  *
- * @param[in]  password  new password to set/store.
+ * @param[in]  password  new password to set/store (max 64 chars).
  * @param[in]  immediate  immediate apply the new settings.
  * @returns  error code representing the progress of the operation.
  */
@@ -65,7 +65,7 @@ esp_err_t wifi_get_password(char * password, size_t password_len);
 
 /** update the hostname for the wifi interface.
  *
- * @param[in]  hostname  new hostname to set/store.
+ * @param[in]  hostname  new hostname to set/store (max 32 chars).
  * @returns  error code representing the progress of the operation.
  */
 esp_err_t wifi_set_hostname(const char * hostname);

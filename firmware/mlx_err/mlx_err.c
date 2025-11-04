@@ -36,9 +36,11 @@ const struct {
     {MLX_FAIL_SERVER_ERR, "Physical layer error: internal server error occurred during handling"},
     {MLX_FAIL_INCORRECT_MODE, "Physical layer error: module is not in correct mode to handle request"},
     {MLX_FAIL_UNKNOWN_BTL_VERSION, "Physical layer error: not supported bootloader protocol version"},
-    {MLX_FAIL_INTERFACE_NOT_FREE, "Interface is not available at the moment"},
+    {MLX_FAIL_INTERFACE_NOT_FREE, "interface is not available at the moment"},
+    {MLX_FAIL_INV_DATA_LEN, "invalid message data length"},
+    {MLX_FAIL_UNKNOWN_ERROR, "unknown error"},
     {MLX_FAIL_INTERNAL, "internal error"},
-    {MLX_FAIL_UNKNOWN, "Unknown error"},
+    {MLX_FAIL_COMMAND_UNKNOWN, "command is not supported"},
     /* transport layer */
     {MLX_FAIL_TL_NOT_EXPECTED, "Transport Layer error: an unexpected response was received (cf in sf)"},
     {MLX_FAIL_TL_INV_NAD, "Transport Layer error: an invalid nad was received"},
