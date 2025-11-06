@@ -34,9 +34,11 @@ typedef enum mlx_error_e {
     MLX_FAIL_SERVER_ERR = -11,                  /**< internal server error occurred during handling */
     MLX_FAIL_INCORRECT_MODE = -12,              /**< uart module is not in correct mode to handle request */
     MLX_FAIL_UNKNOWN_BTL_VERSION = -13,         /**< not supported bootloader protocol version */
-    MLX_FAIL_INTERFACE_NOT_FREE = -14,          /**< uart interface is not free */
+    MLX_FAIL_INTERFACE_NOT_FREE = -14,          /**< interface is not available at the moment */
+    MLX_FAIL_INV_DATA_LEN = -0x7C,              /**< invalid message data length */
+    MLX_FAIL_UNKNOWN_ERROR = -0x7D,             /**< unknown error */
     MLX_FAIL_INTERNAL = -0x7E,                  /**< internal error */
-    MLX_FAIL_UNKNOWN = -0x7F,                   /**< unknown error */
+    MLX_FAIL_COMMAND_UNKNOWN = -0x7F,           /**< command is not supported */
     /* transport layer */
     MLX_FAIL_TL_NOT_EXPECTED = -0x81,           /**< tl error: an unexpected response was received (cf in sf) */
     MLX_FAIL_TL_INV_NAD = -0x82,                /**< tl error: an invalid nad was received */

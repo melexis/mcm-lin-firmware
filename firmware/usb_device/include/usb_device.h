@@ -14,13 +14,17 @@
  *
  * @endinternal
  *
- * @ingroup application
+ * @ingroup lib_usb_device
+ * @addtogroup lib_usb_device Melexis USB Device Library
  *
- * @details This file contains the definitions of the USB device module.
+ * @details Definitions of the USB device module.
+ * @{
  */
+#pragma once
 
-#ifndef USB_DEVICE_H_
-    #define USB_DEVICE_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** Initialize the USB device module */
 void usbdevice_init(void);
@@ -28,4 +32,8 @@ void usbdevice_init(void);
 /** USB device task to be called on regular base */
 void usbdevice_task(void);
 
-#endif  /* USB_DEVICE_H_ */
+/** @} */
+
+#ifdef __cplusplus
+}
+#endif

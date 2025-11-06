@@ -165,7 +165,11 @@ esp_err_t wifi_get_ssid(char * ssid, size_t ssid_len) {
     esp_err_t err = esp_wifi_get_config(ESP_IF_WIFI_STA, &wifi_config);
 
     if (err == ESP_OK) {
-        strncpy(ssid, (char*)wifi_config.sta.ssid, ssid_len);
+        size_t len = ssid_len;
+        if (len > sizeof(wifi_config.sta.ssid)) {
+            len = sizeof(wifi_config.sta.ssid);
+        }
+        strncpy(ssid, (char*)wifi_config.sta.ssid, len);
     }
 
     return err;
@@ -196,7 +200,11 @@ esp_err_t wifi_get_password(char * password, size_t password_len) {
     esp_err_t err = esp_wifi_get_config(ESP_IF_WIFI_STA, &wifi_config);
 
     if (err == ESP_OK) {
-        strncpy(password, (char*)wifi_config.sta.password, password_len);
+        size_t len = password_len;
+        if (len > sizeof(wifi_config.sta.ssid)) {
+            len = sizeof(wifi_config.sta.ssid);
+        }
+        strncpy(password, (char*)wifi_config.sta.password, len);
     }
 
     return err;
