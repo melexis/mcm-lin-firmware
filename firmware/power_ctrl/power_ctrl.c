@@ -33,10 +33,13 @@
 #error "slave power adc channel is wrong"
 #endif
 
-adc_oneshot_unit_handle_t adc1_handle;
-adc_oneshot_unit_handle_t adc2_handle;
+adc_oneshot_unit_handle_t adc1_handle = NULL;
+adc_oneshot_unit_handle_t adc2_handle = NULL;
+/** SLAVE_CUR adc channel (GPIO4=ADC1_3) */
 #define ADC_CHANNEL_CUR_SENSE ADC_CHANNEL_3
+/** MEAS_VS adc channel (GPIO18=ADC2_7) */
 #define ADC_CHANNEL_VSUPPLY ADC_CHANNEL_7
+/** MEAS_VOUT adc channel (GPIO17=ADC2_6) */
 #define ADC_CHANNEL_VBUS ADC_CHANNEL_6
 
 void powerctrl_init(void) {
@@ -56,7 +59,7 @@ void powerctrl_init(void) {
     ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_adc2, &adc2_handle));
 
     adc_oneshot_chan_cfg_t config = {
-        .bitwidth = ADC_BITWIDTH_DEFAULT,
+        .bitwidth = ADC_BITWIDTH_12,
         .atten = ADC_ATTEN_DB_12,
     };
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC_CHANNEL_CUR_SENSE, &config));
@@ -90,7 +93,7 @@ int32_t powerctrl_getSupplyVoltage(void) {
     int adc_raw;
     if (adc_oneshot_read(adc2_handle, ADC_CHANNEL_VSUPPLY, &adc_raw) == ESP_OK) {
         voltage = adc_raw * 3100 / 4095;   /* TODO use eFuse calibrations */
-        voltage *= 13;
+        voltage = voltage * (9090 + 1000) / 1000;
     }
     return voltage;
 }
@@ -100,7 +103,7 @@ int32_t powerctrl_getBusVoltage(void) {
     int adc_raw;
     if (adc_oneshot_read(adc2_handle, ADC_CHANNEL_VBUS, &adc_raw) == ESP_OK) {
         voltage = adc_raw * 3100 / 4095;   /* TODO use eFuse calibrations */
-        voltage *= 13;
+        voltage = voltage * (9090 + 1000) / 1000;
     }
     return voltage;
 }

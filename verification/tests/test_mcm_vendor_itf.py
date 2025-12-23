@@ -48,8 +48,12 @@ def test_slave_power_control(use_mcm_usb):
     mcm = use_mcm_usb()
     power_out = mcm.get_device("power_out0")
     power_out.power_down()
+    assert 11000 < power_out.supply_voltage() < 13000
+    assert 0 <= power_out.bus_voltage() < 5000
     assert power_out.power_state() is False
     power_out.power_up()
+    assert 11000 < power_out.supply_voltage() < 13000
+    assert 11000 < power_out.bus_voltage() < 13000
     assert power_out.power_state() is True
     power_out.power_down()
     assert power_out.power_state() is False
