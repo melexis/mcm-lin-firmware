@@ -75,7 +75,7 @@ CONFIG_TINYUSB_VENDOR_COUNT=1
 #
 # Communication Device Class (CDC)
 #
-CONFIG_TINYUSB_CDC_ENABLED=y
+CONFIG_TINYUSB_CDC_ENABLED=n
 
 #
 # Human Interface Device Class (HID)
