@@ -42,6 +42,11 @@ enum {
     STRID_WEBUSB_INT
 };
 
+/** Device serial number */
+char device_serial_nr[13] = {
+    "sn"
+};
+
 /** Device string descriptor */
 char const * string_descriptor[] = {
     (char[]){0x09, 0x04},   /* 0: is supported language is English (0x0409) */
@@ -224,12 +229,6 @@ uint8_t const ms_os_20_descriptor[] = {
 };
 
 TU_VERIFY_STATIC(sizeof(ms_os_20_descriptor) == MS_OS_20_DESC_LEN, "Incorrect size");
-
-
-/** Device serial number */
-char device_serial_nr[13] = {
-    "sn"
-};
 
 
 esp_err_t usbdesc_install_driver(void) {
