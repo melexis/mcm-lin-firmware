@@ -29,6 +29,31 @@
 
 
 /* --------------------------------------------------------------------
+ * String Descriptor
+ * -------------------------------------------------------------------- */
+
+/** String descriptor index */
+enum {
+    STRID_LANGID = 0,
+    STRID_MANUFACTURER,
+    STRID_PRODUCT,
+    STRID_SERIAL,
+    STRID_CDC_INT,
+    STRID_WEBUSB_INT
+};
+
+/** Device string descriptor */
+char const * string_descriptor[] = {
+    (char[]){0x09, 0x04},   /* 0: is supported language is English (0x0409) */
+    manufacturerName,       /* 1: Manufacturer */
+    deviceDescription,      /* 2: Product */
+    device_serial_nr,       /* 3: serial number */
+    "MCM CDC",              /* 4: CDC */
+    "MCM WebUSB"            /* 5: Vendor */
+};
+
+
+/* --------------------------------------------------------------------
  * Device descriptor
  * -------------------------------------------------------------------- */
 
@@ -47,9 +72,9 @@ tusb_desc_device_t const device_descriptor =
     .idProduct          = 0x6F09,
     .bcdDevice          = 0x0100,
 
-    .iManufacturer      = 0x01,
-    .iProduct           = 0x02,
-    .iSerialNumber      = 0x03,
+    .iManufacturer      = STRID_MANUFACTURER,
+    .iProduct           = STRID_PRODUCT,
+    .iSerialNumber      = STRID_SERIAL,
 
     .bNumConfigurations = 0x01
 };
@@ -101,14 +126,14 @@ uint8_t const configuration_descriptor[] = {
                           TUSB_DESC_CONFIG_ATT_SELF_POWERED,  /* attribute */
                           100),                 /* power in mA */
     TUD_CDC_DESCRIPT_2(ITF_NUM_CDC,                         /* interface number */
-                       4,                                   /* string index */
+                       STRID_CDC_INT,                       /* string index */
                        0x80 | EPNUM_CDC_NOTIF_OUT,          /* EP notification address */
                        8,                                   /* EP notification size */
                        EPNUM_CDC_OUT,                       /* EP Out address */
                        0x80 | EPNUM_CDC_IN,                 /* EP In address */
                        64),                                 /* size */
     TUD_VENDOR_DESCRIPTOR(ITF_NUM_VENDOR,                   /* interface number */
-                          5,                                /* string index */
+                          STRID_WEBUSB_INT,                 /* string index */
                           EPNUM_VENDOR_OUT,                 /* EP Out address */
                           0x80 | EPNUM_VENDOR_IN,           /* EP In address */
                           64)                               /* size */
@@ -201,33 +226,9 @@ uint8_t const ms_os_20_descriptor[] = {
 TU_VERIFY_STATIC(sizeof(ms_os_20_descriptor) == MS_OS_20_DESC_LEN, "Incorrect size");
 
 
-/* --------------------------------------------------------------------
- * String Descriptor
- * -------------------------------------------------------------------- */
-
-/** String descriptor index */
-enum {
-    STRID_LANGID = 0,
-    STRID_MANUFACTURER,
-    STRID_PRODUCT,
-    STRID_SERIAL,
-    STRID_CDC_INT,
-    STRID_WEBUSB_INT
-};
-
 /** Device serial number */
 char device_serial_nr[13] = {
     "sn"
-};
-
-/** Device string descriptor */
-char const * string_descriptor[] = {
-    (char[]){0x09, 0x04},   /* 0: is supported language is English (0x0409) */
-    manufacturerName,       /* 1: Manufacturer */
-    deviceDescription,      /* 2: Product */
-    device_serial_nr,       /* 3: serial number */
-    "MCM CDC",              /* 4: CDC */
-    "MCM WebUSB"            /* 5: Vendor */
 };
 
 
