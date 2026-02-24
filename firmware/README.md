@@ -1,7 +1,16 @@
 # Setup environment
 
+## Native
+
 ```sh
 $ . ~/workspace/tools/esp-idf/export.sh
+```
+
+## Docker
+
+```sh
+$ docker run -it --rm -v $(pwd):/tmp/tst --device=/dev/ttyUSB0 --device=/dev/ttyUSB1 espressif/idf:v5.5.3
+root@3d819e2767ac:/# cd /tmp/tst
 ```
 
 # Configure app
