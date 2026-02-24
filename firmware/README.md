@@ -90,7 +90,7 @@ $ uncrustify -c ../verification/uncrustify/uncrustify.cfg --replace --no-backup 
 # Use Docker
 
 ```sh
-$ docker run -it --rm --device=/dev/ttyUSB0 --device=/dev/ttyUSB1 -v $(pwd):/tmp/tst espressif/idf:v5.5.1
+$ docker run -it --rm --device=/dev/ttyUSB0 --device=/dev/ttyUSB1 -v $(pwd):/tmp/tst espressif/idf:v5.5.3
 $ cd /tmp/tst/firmware
 $ idf.py set-target esp32s3
 $ idf.py build
