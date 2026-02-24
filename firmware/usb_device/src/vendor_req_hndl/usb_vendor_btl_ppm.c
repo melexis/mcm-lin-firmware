@@ -46,6 +46,7 @@ static const char *TAG = "usb-vendor-btl-ppm";
 typedef enum vendor_request_bulk_msg_e {
     /* (MCM_VENDOR_REQUEST_BOOTLOADER_PPM << 8) + [0x00..0xFF] */
     PPM_DO_BTL_ACTION = 0x3300,
+    PPM_READ_PROJECT_INFO = 0x3301,
     /* MCM_BULK_MSG_ERROR_REPORT = 0xFFFF */
 } vendor_request_bulk_msg_t;
 
@@ -53,7 +54,7 @@ typedef struct vendor_btl_request_s {
     uint32_t bitrate;         /**< baudrate to be used during bootloader operations */
     uint8_t manpow;           /**< 1: manual power cycling */
     uint8_t broadcast;        /**< 1: bootloading shall be done in broadcast mode */
-    uint8_t memory;           /**< memory type to perform action on (0: NVRAM; 1: flash) */
+    uint8_t memory;           /**< memory type to perform action on (0: NVRAM; 1: flash; 2: flash_cs) */
     uint8_t action;           /**< action type to perform (0: program; 1: verify) */
 } vendor_btl_request_t;
 
@@ -73,6 +74,8 @@ static bool bulk_btl_command_handler(uint16_t command, const uint8_t * data, uin
                         memory = PPM_MEM_NVRAM;
                     } else if (req_data->memory == 1) {
                         memory = PPM_MEM_FLASH;
+                    } else if (req_data->memory == 2) {
+                        memory = PPM_MEM_FLASH_CS;
                     }
 
                     ppm_action_t action = PPM_ACT_INVALID;
@@ -98,6 +101,22 @@ static bool bulk_btl_command_handler(uint16_t command, const uint8_t * data, uin
 
                     handled = true;
                     result = MLX_OK;
+                } else {
+                    result = MLX_FAIL_INV_DATA_LEN;
+                }
+                break;
+
+            case PPM_READ_PROJECT_INFO:
+                if (datalen == 1u) {
+                    uint16_t project_info = 0xFFFF;
+                    result = ppmbtl_readChipInfo(data[0] != 0, &project_info);
+
+                    if (result >= MLX_OK) {
+                        usb_vendor_bulk_write_response(command,
+                                                       (uint8_t*)&project_info,
+                                                       sizeof(uint16_t));
+                        handled = true;
+                    }
                 } else {
                     result = MLX_FAIL_INV_DATA_LEN;
                 }

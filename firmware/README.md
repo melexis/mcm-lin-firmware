@@ -1,7 +1,16 @@
 # Setup environment
 
+## Native
+
 ```sh
 $ . ~/workspace/tools/esp-idf/export.sh
+```
+
+## Docker
+
+```sh
+$ docker run -it --rm -v $(pwd):/tmp/tst --device=/dev/ttyUSB0 --device=/dev/ttyUSB1 espressif/idf:v5.5.3
+root@3d819e2767ac:/# cd /tmp/tst
 ```
 
 # Configure app
@@ -81,7 +90,7 @@ $ uncrustify -c ../verification/uncrustify/uncrustify.cfg --replace --no-backup 
 # Use Docker
 
 ```sh
-$ docker run -it --rm --device=/dev/ttyUSB0 --device=/dev/ttyUSB1 -v $(pwd):/tmp/tst espressif/idf:v5.5.1
+$ docker run -it --rm --device=/dev/ttyUSB0 --device=/dev/ttyUSB1 -v $(pwd):/tmp/tst espressif/idf:v5.5.3
 $ cd /tmp/tst/firmware
 $ idf.py set-target esp32s3
 $ idf.py build
