@@ -39,7 +39,7 @@ extern const uint8_t server_${get_object_name_for_file(file)}_start[] asm ("_bin
 extern const uint8_t server_${get_object_name_for_file(file)}_end[] asm ("_binary_${get_object_name_for_file(file)}_end");
 
 % endfor
-www_item_t www_bin_files[] =
+const www_item_t www_bin_files[] =
 {
 % for file in files:
     {

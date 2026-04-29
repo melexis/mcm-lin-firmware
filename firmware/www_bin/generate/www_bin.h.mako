@@ -31,9 +31,9 @@ from datetime import datetime
 typedef struct {
     const char * path;
     const uint8_t * start;
-    ssize_t * length;
+    const ssize_t * length;
 } www_item_t;
 
-extern www_item_t www_bin_files[${len(files)}];
+extern const www_item_t www_bin_files[${len(files)}];
 
 #endif /* WWW_BIN_H_ */

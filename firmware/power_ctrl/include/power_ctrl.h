@@ -3,7 +3,7 @@
  * @brief The power control definitions.
  * @internal
  *
- * @copyright (C) 2025 Melexis N.V.
+ * @copyright (C) 2023-2026 Melexis N.V.
  *
  * Melexis N.V. is supplying this code for use with Melexis N.V. processor based microcontrollers only.
  *
@@ -41,10 +41,22 @@ void powerctrl_slaveDisable(void);
  */
 bool powerctrl_slaveEnabled(void);
 
-/** */
+/** Get the current level on the supply output connector
+ *
+ * @returns  measured current level [mA].
+ */
 int32_t powerctrl_getOutputCurrent(void);
 
+/** Get the voltage level on the supply input connector.
+ *
+ * @returns  measured voltage level [mV].
+ */
 int32_t powerctrl_getSupplyVoltage(void);
+
+/** Get the voltage level on the supply output connector.
+ *
+ * @returns  measured voltage level [mV].
+ */
 int32_t powerctrl_getBusVoltage(void);
 
 #endif  /* POWER_CTRL_H_ */
