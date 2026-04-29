@@ -6,7 +6,7 @@ idf_component_register(
          "webserver.c"
     INCLUDE_DIRS "include"
     EMBED_TXTFILES "certs/servercert.pem"
-                  "certs/prvtkey.pem"
+                   "certs/prvtkey.pem"
     REQUIRES bus_manager
              device_info
              device_status
