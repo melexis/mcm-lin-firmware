@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief The power control module.
+ * @brief The power control module for VN7040ASTR switch.
  * @internal
  *
  * @copyright (C) 2025 Melexis N.V.
@@ -16,7 +16,7 @@
  *
  * @ingroup application
  *
- * @details This file contains the implementations of the power control module.
+ * @details This file contains the implementations of the power control module for VN7040ASTR switch.
  */
 #include <string.h>
 #include <stdbool.h>
@@ -35,10 +35,13 @@
 
 adc_oneshot_unit_handle_t adc1_handle = NULL;
 adc_oneshot_unit_handle_t adc2_handle = NULL;
+
 /** SLAVE_CUR adc channel (GPIO4=ADC1_3) */
 #define ADC_CHANNEL_CUR_SENSE ADC_CHANNEL_3
+
 /** MEAS_VS adc channel (GPIO18=ADC2_7) */
 #define ADC_CHANNEL_VSUPPLY ADC_CHANNEL_7
+
 /** MEAS_VOUT adc channel (GPIO17=ADC2_6) */
 #define ADC_CHANNEL_VBUS ADC_CHANNEL_6
 
@@ -84,6 +87,7 @@ int32_t powerctrl_getOutputCurrent(void) {
     int adc_raw;
     if (adc_oneshot_read(adc1_handle, ADC_CHANNEL_CUR_SENSE, &adc_raw) == ESP_OK) {
         voltage = adc_raw * 3100 / 4095;   /* TODO use eFuse calibrations */
+        voltage = voltage * (160 + 430) / 430;
     }
     return voltage;
 }
@@ -93,7 +97,7 @@ int32_t powerctrl_getSupplyVoltage(void) {
     int adc_raw;
     if (adc_oneshot_read(adc2_handle, ADC_CHANNEL_VSUPPLY, &adc_raw) == ESP_OK) {
         voltage = adc_raw * 3100 / 4095;   /* TODO use eFuse calibrations */
-        voltage = voltage * (9090 + 1000) / 1000;
+        voltage *= (9090 + 1000) / 1000;
     }
     return voltage;
 }
@@ -103,7 +107,7 @@ int32_t powerctrl_getBusVoltage(void) {
     int adc_raw;
     if (adc_oneshot_read(adc2_handle, ADC_CHANNEL_VBUS, &adc_raw) == ESP_OK) {
         voltage = adc_raw * 3100 / 4095;   /* TODO use eFuse calibrations */
-        voltage = voltage * (9090 + 1000) / 1000;
+        voltage *= (9090 + 1000) / 1000;
     }
     return voltage;
 }
