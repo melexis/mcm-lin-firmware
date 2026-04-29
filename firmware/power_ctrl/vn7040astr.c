@@ -87,7 +87,7 @@ int32_t powerctrl_getOutputCurrent(void) {
     int adc_raw;
     if (adc_oneshot_read(adc1_handle, ADC_CHANNEL_CUR_SENSE, &adc_raw) == ESP_OK) {
         voltage = adc_raw * 3100 / 4095;   /* TODO use eFuse calibrations */
-        voltage = voltage * (160 + 430) / 430;
+        voltage = (int32_t)(((int64_t)voltage * (160 + 430)) / 430);
     }
     return voltage;
 }
@@ -97,7 +97,7 @@ int32_t powerctrl_getSupplyVoltage(void) {
     int adc_raw;
     if (adc_oneshot_read(adc2_handle, ADC_CHANNEL_VSUPPLY, &adc_raw) == ESP_OK) {
         voltage = adc_raw * 3100 / 4095;   /* TODO use eFuse calibrations */
-        voltage *= (9090 + 1000) / 1000;
+        voltage = (int32_t)(((int64_t)voltage * (9090 + 1000)) / 1000);
     }
     return voltage;
 }
@@ -107,7 +107,7 @@ int32_t powerctrl_getBusVoltage(void) {
     int adc_raw;
     if (adc_oneshot_read(adc2_handle, ADC_CHANNEL_VBUS, &adc_raw) == ESP_OK) {
         voltage = adc_raw * 3100 / 4095;   /* TODO use eFuse calibrations */
-        voltage *= (9090 + 1000) / 1000;
+        voltage = (int32_t)(((int64_t)voltage * (9090 + 1000)) / 1000);
     }
     return voltage;
 }
