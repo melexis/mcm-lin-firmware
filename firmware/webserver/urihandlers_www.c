@@ -59,7 +59,7 @@ static esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepa
 
 /** Send a file in a http response */
 static esp_err_t send_file(httpd_req_t *req, const char *filepath) {
-    www_item_t * item = NULL;
+    const www_item_t * item = NULL;
     for (int index = 0; index < sizeof(www_bin_files) / sizeof(www_bin_files[0]); index++) {
         if (strcasecmp(www_bin_files[index].path, filepath) == 0) {
             item = &www_bin_files[index];
